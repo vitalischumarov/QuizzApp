@@ -37,4 +37,9 @@ struct QuestionModel {
         score += 1
     }
     
+    mutating func resetGame() {
+        score = 0
+        questionNumber = 0
+    }
+    
 }

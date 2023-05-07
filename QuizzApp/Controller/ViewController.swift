@@ -13,6 +13,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var trueButton: UIButton!
     @IBOutlet weak var falseButton: UIButton!
     @IBOutlet weak var scoreLabel: UILabel!
+    @IBOutlet weak var restartButton: UIButton!
     
     var questionModel = QuestionModel()
     var timer = Timer()
@@ -27,24 +28,28 @@ class ViewController: UIViewController {
     @IBAction func buttonPressed(_ sender: UIButton) {
         let pressedAnswer = sender.currentTitle!
         if (pressedAnswer == questionModel.allQuestion[questionModel.questionNumber].answer) {
-            updateQuestion()
+
             updateProgressBar()
             updateScore()
             changeCorrectButtonColor(buttonName: pressedAnswer)
-        } else {
             updateQuestion()
+        } else {
             updateProgressBar()
             changeWrongButtonColor(buttonName: pressedAnswer)
+            updateQuestion()
         }
     }
     
     func updateQuestion() {
-        if ( questionModel.nextQuestion()) {
+        if (questionModel.nextQuestion()) {
             questionLabel.text = questionModel.allQuestion[questionModel.questionNumber].question
         } else {
             trueButton.isEnabled = false
             falseButton.isEnabled = false
             questionLabel.text = "Das Spiel ist zu ende."
+            restartButton.isEnabled = true
+            restartButton.backgroundColor = UIColor.systemBlue
+
         }
     }
     
@@ -63,7 +68,7 @@ class ViewController: UIViewController {
         } else {
             falseButton.backgroundColor = UIColor.green
         }
-        startTimer()
+            startTimer()
     }
     
     func changeWrongButtonColor(buttonName: String) {
@@ -72,14 +77,29 @@ class ViewController: UIViewController {
         } else {
             falseButton.backgroundColor = UIColor.red
         }
-        startTimer()
+            startTimer()
     }
     
     func startTimer() {
         let timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { timer in
-            self.trueButton.backgroundColor = UIColor.clear
-            self.falseButton.backgroundColor = UIColor.clear
+            self.trueButton.backgroundColor = UIColor.systemBlue
+            self.falseButton.backgroundColor = UIColor.systemBlue
         }
     }
+    
+    @IBAction func restartGame(_ sender: UIButton) {
+        questionModel.resetGame()
+        scoreLabel.text = ("Score: \(questionModel.score) / \(questionModel.allQuestion.count)")
+        progressBar.progress = 0.0
+        questionLabel.text = questionModel.allQuestion[questionModel.questionNumber].question
+        print("tapped")
+        trueButton.isEnabled = true
+        trueButton.backgroundColor = UIColor.systemBlue
+        falseButton.isEnabled = true
+        falseButton.backgroundColor = UIColor.systemBlue
+        restartButton.backgroundColor = UIColor.gray
+        restartButton.isEnabled = false
+    }
+    
 }
 
